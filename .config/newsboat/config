@@ -1,0 +1,15 @@
+browser "qutebrowser --loglevel error --target tab-bg-silent %u &"
+auto-reload yes
+
+bind-key h quit
+bind-key j down
+bind-key k up
+bind-key l open
+bind-key n next-feed
+bind-key p prev-feed
+bind-key g home
+bind-key G end
+bind-key b bookmark
+bind-key r redraw
+bind-key SPACE macro-prefix
+bind-key o open-in-browser-and-mark-read

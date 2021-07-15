@@ -1,0 +1,5 @@
+directory: ~/music
+library: ~/music/beets.db
+plugins: fromfilename edit
+import:
+  move: yes

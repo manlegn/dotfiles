@@ -1,0 +1,111 @@
+set $mod Mod4
+set $alt Mod1
+
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+
+set $system [p]oweroff, [r]eboot [s]uspend or [l]ock
+
+workspace_auto_back_and_forth yes
+floating_modifier $mod
+font pango:Hack 16
+
+for_window [class="(?i)firefox|thunderbird|chrom|code|qute|mpv"] border none
+for_window [class="mpv"] floating enable, sticky enable
+for_window [class="qutebrowser"] fullscreen enable
+
+assign [class="qutebrowser"] workspace 1
+assign [class="(?i)firefox|thunder|chrom"] workspace 2
+assign [class="(?i)thunar|pcmanfm"] workspace 2
+assign [class="Emacs"] workspace 3
+assign [class="Code"] workspace 4
+
+mode "resize" {
+	bindsym h resize shrink width 10 px or 10 ppt
+	bindsym j resize grow height 10 px or 10 ppt
+	bindsym k resize shrink height 10 px or 10 ppt
+	bindsym l resize grow width 10 px or 10 ppt
+
+	bindsym Escape mode "default"
+}
+
+mode "$system" {
+	bindsym p exec --no-startup-id systemctl poweroff, mode "default"
+	bindsym r exec --no-startup-id systemctl reboot, mode "default"
+	bindsym s exec --no-startup-id systemctl suspend, mode "default"
+	bindsym l exec --no-startup-id i3lock -c 333333, mode "default"
+
+	bindsym Escape mode "default"
+}
+
+bar {
+        status_command i3status
+		strip_workspace_numbers yes
+		tray_output none
+}
+
+bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+space exec i3-dmenu-desktop --dmenu="dmenu -i -p open -fn Hack:size=16"
+bindsym $mod+p exec passmenu -i -p pass -fn Hack:size=16
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+$alt+h move left
+bindsym $mod+$alt+j move down
+bindsym $mod+$alt+k move up
+bindsym $mod+$alt+l move right
+
+bindsym $mod+c kill
+bindsym $mod+b split h 
+bindsym $mod+v split v
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+f fullscreen toggle
+bindsym $mod+$alt+space floating toggle
+bindsym $mod+x move workspace to output right, move workspace to output down
+bindsym $mod+Escape mode "$system"
+bindsym $mod+r mode "resize"
+bindsym $mod+i exec --no-startup-id maim $HOME/pics/maim_$(date +%s).png
+bindsym $mod+$alt+i exec --no-startup-id maim | imgur.sh - && xclip -sel p -o | xclip -sel c -i
+bindsym $mod+g exec --no-startup-id gammastep -m randr -l 47:11 -o
+bindsym $mod+$alt+g exec --no-startup-id gammastep -m randr -l 47:11 -x
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id ponymix increase 5
+bindsym XF86AudioLowerVolume exec --no-startup-id ponymix decrease 5
+bindsym XF86AudioMute exec --no-startup-id pactl ponymix toggle
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10
+
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+
+bindsym $mod+$alt+1 move container to workspace number $ws1
+bindsym $mod+$alt+2 move container to workspace number $ws2
+bindsym $mod+$alt+3 move container to workspace number $ws3
+bindsym $mod+$alt+4 move container to workspace number $ws4
+bindsym $mod+$alt+5 move container to workspace number $ws5
+bindsym $mod+$alt+6 move container to workspace number $ws6
+bindsym $mod+$alt+7 move container to workspace number $ws7
+bindsym $mod+$alt+8 move container to workspace number $ws8
+bindsym $mod+$alt+9 move container to workspace number $ws9
+
+bindsym $mod+$alt+e exec i3-msg exit
+bindsym $mod+$alt+r restart

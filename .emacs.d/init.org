@@ -1,0 +1,204 @@
+* Settings
+** Package archives
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                           ("melpa" . "https://melpa.org/packages/")
+                           ("org" . "http://orgmode.org/elpa/")))
+
+  (package-initialize)
+
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+#+END_SRC
+
+** Better defaults
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "manu"
+        user-mail-address "manu@tilde.team")
+
+  (setq
+   inhibit-startup-screen t
+   select-enable-clipboard t
+   help-window-select t
+   fill-column 80)
+
+  (global-set-key "\M- " 'hippie-expand)
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  (global-auto-revert-mode t)
+  (column-number-mode t)
+  (show-paren-mode t)
+  (cua-mode t)
+  (winner-mode t)
+#+END_SRC
+
+** User interface
+#+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'default nil
+                      :font "Hack 21")
+
+  (blink-cursor-mode 0)
+  (scroll-bar-mode 0)
+  (tool-bar-mode 0)
+  (menu-bar-mode 0)
+  (tooltip-mode 0)
+#+END_SRC
+** Backups
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'backup-directory-alist '("." . "~/.emacs.d/backup"))
+
+  (setq delete-old-versions -1)
+  (setq version-control t)
+  (setq vc-make-backup-files t)
+  (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+#+END_SRC
+** History
+#+BEGIN_SRC emacs-lisp
+(setq savehist-file "~/.emacs.d/savehist")
+(savehist-mode +1)
+(setq savehist-save-minibuffer-history +1)
+(setq savehist-additional-variables
+      '(kill-ring
+        search-ring
+        regexp-search-ring))
+#+END_SRC
+* Packages
+** use-package
+#+BEGIN_SRC emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (eval-when-compile
+    (require 'use-package))
+
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+#+END_SRC
+** which-key
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :config (which-key-mode))
+#+END_SRC
+** smex
+#+BEGIN_SRC emacs-lisp
+(use-package smex)
+#+END_SRC
+** ivy
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :config 
+    (setq
+     ivy-count-format "%d/%d"
+     ivy-use-virtual-buffers t
+     ivy-initial-inputs-alist nil)
+
+    (global-set-key "\C-s" 'swiper)
+
+    (ivy-mode t)
+    (counsel-mode t))
+#+END_SRC
+** org
+#+BEGIN_SRC emacs-lisp
+    (use-package org
+      :config
+
+      (setq
+       org-startup-indented t
+       org-directory "~/org"
+       ;; org-agenda-window-setup 'only-window
+       org-agenda-files (append (directory-files-recursively "~/org" "\.org$"))
+       org-default-notes-file "~/org/notes.org"
+       org-refile-targets '((org-agenda-files . (:maxlevel . 3)))
+       org-refile-use-outline-path 'file
+       org-refile-allow-creating-parent-nodes 'confirm
+       org-outline-path-complete-in-steps nil
+       org-archive-location "~/org/archive.org::* ARCHIVE"
+       org-src-window-setup 'current-window
+       org-confirm-babel-evaluate nil)
+
+      (add-to-list 'org-modules 'org-crypt)
+      (add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+      (setq org-todo-keywords
+            (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)"))))
+
+      (setq org-todo-keyword-faces
+            (quote (("NEXT" :foreground "blue" :weight bold))))
+
+      (require 'org-tempo)
+      (require 'org-crypt)
+      (org-crypt-use-before-save-magic)
+
+      (setq org-crypt-key "manu@tilde.team")
+
+      :bind (("C-c a" . org-agenda)
+             ("C-c c" . org-capture)
+             ("C-c l" . org-store-link)))
+#+END_SRC
+
+#+begin_src emacs-lisp
+  (setq org-publish-project-alist
+        '(("pages"
+           :base-directory "~/org/blog"
+           :publishing-function org-html-publish-to-html
+           :publishing-directory "~/public_html"
+           :html-html5-fancy t
+           :html-doctype "html5"
+           :section-numbers nil
+           :with-toc nil
+           :recursive t
+           :with-author nil
+           :html-head "<link rel=\"stylesheet\" href=\"css/style.css\">"
+           :html-preamble "<a href=\"https://tilde.team/~manu/\" rel=\"home\">~manu</a>"
+           :html-postamble "published on %d<br>with %c"
+           :html-validation-link nil)
+
+          ("static"
+           :base-directory "~/org/blog"
+           :base-extension any
+           :exclude "org"
+           :recursive t
+           :publishing-directory "~/public_html"
+           :publishing-function org-publish-attachment)
+
+          ("blog" :components ("pages" "static"))))
+#+end_src
+** lsp
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :hook
+    (;; (web-mode . lsp-deferred)
+     (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp-deferred)
+
+  (use-package lsp-ui
+    :commands lsp-ui-mode)
+  (use-package lsp-ivy
+    :commands lsp-ivy-workspace-symbol)
+
+  ;;(use-package lsp-treemacs
+  ;;  :commands lsp-treemacs-errors-list)
+#+end_src
+
+** try
+#+begin_src emacs-lisp
+(use-package try)
+#+end_src
+** hungry-delete
+#+begin_src emacs-lisp
+  (use-package hungry-delete
+    :config (global-hungry-delete-mode))
+#+end_src
+
+** expand-region
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :bind (("C-=" . er/expand-region)))
+#+end_src

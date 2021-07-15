@@ -1,0 +1,8 @@
+[init]
+defaultBranch = main
+
+[user]
+name = manu
+email = manu@tilde.team
+[alias]
+reboot = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-initial commit}\");};f"

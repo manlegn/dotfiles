@@ -1,0 +1,3 @@
+-o ~/tmp/%(title)s.%(ext)s
+--ignore-errors
+--add-metadata
