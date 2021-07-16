@@ -9,7 +9,4 @@ bind-key n next-feed
 bind-key p prev-feed
 bind-key g home
 bind-key G end
-bind-key b bookmark
-bind-key r redraw
-bind-key SPACE macro-prefix
 bind-key o open-in-browser-and-mark-read
