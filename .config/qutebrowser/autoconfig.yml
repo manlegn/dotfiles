@@ -28,6 +28,10 @@ settings:
     global: false
   content.javascript.enabled:
     global: true
+  downloads.location.directory:
+    global: ~/tmp/
+  downloads.location.prompt:
+    global: false
   fonts.default_family:
     global: Hack
   fonts.default_size:
